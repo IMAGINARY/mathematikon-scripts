@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+
+if [ "$UID" -ne 0 ]
+then
+    >&2 echo "This script requires superuser priviledges."
+    exit 1
+fi
+
+################################################################################
+# Install launch script dependencies
+################################################################################
+apt install -yq \
+    xdotool \
+    '' # dummy entry to terminate the list
+
+################################################################################
+# Install Miniconda3
+################################################################################
+CONDA_INSTALL_DIR="/opt/con-espressione/miniconda3"
+CONDA="$CONDA_INSTALL_DIR/bin/conda"
+CONDA_TARGET_VERSION="4.6.14"
+CONDA_INSTALLED_VERSION=$("$CONDA" -V 2> /dev/null | sed "s/^[^[:space:]]*[[:space:]]//")
+if [ "$CONDA_TARGET_VERSION" = "$CONDA_INSTALLED_VERSION" ]
+then
+    echo "miniconda3 v$CONDA_TARGET_VERSION already installed"
+else
+    TEMP_SH="$(mktemp)"
+    wget -O "$TEMP_SH" "https://repo.anaconda.com/miniconda/Miniconda3-$CONDA_TARGET_VERSION-Linux-x86_64.sh"
+    bash "$TEMP_SH" -b -p "$CONDA_INSTALL_DIR"
+    rm -f "$TEMP_SH"
+    chmod 777 -R "$CONDA_INSTALL_DIR"
+    #ln -fs "$CONDA_INSTALL_DIR/etc/profile.d/conda.sh" /etc/profile.d/conda.sh
+    #echo "conda activate" >> ~/.bashrc
+fi
+
+################################################################################
+# Install Leap Motion packages (leapd)
+################################################################################
+# Install kiosk browser
+LEAPD_TARGET_VERSION="2.3.1+31549"
+LEAPD_INSTALLED_VERSION=$(dpkg-query --showformat='${Version} ${Status}' --show leap 2> /dev/null | awk '$NF == "installed"{print $1}')
+if [ "$LEAPD_TARGET_VERSION" = "$LEAPD_INSTALLED_VERSION" ]
+then
+    echo "leapd v$LEAPD_TARGET_VERSION already installed"
+else
+    TEMP_DIR="$(mktemp -d)"
+    cd "$TEMP_DIR"
+    curl -L https://warehouse.leapmotion.com/apps/4186/download \
+        | tar xvz Leap_Motion_Installer_Packages_release_public_linux/Leap-2.3.1+31549-x64.deb
+    dpkg -i Leap_Motion_Installer_Packages_release_public_linux/Leap-2.3.1+31549-x64.deb
+    rm -rf "TEMP_DIR"
+    
+    # Add a systemd service for leapd as proposed at
+    # https://forums.leapmotion.com/t/tip-ubuntu-systemd-and-leapd/2118
+    LEADD_SERVICE="/lib/systemd/system/leapd.service"
+    cat >$LEADD_SERVICE <<EOF
+[Unit]
+Description=LeapMotion Daemon
+After=syslog.target
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/leapd
+KillSignal=SIGKILL
+Restart=always
+RestartSec=10ms
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    systemctl daemon-reload
+    systemctl enable leapd.service
+    systemctl start leapd.service
+fi
+
+################################################################################
+# Install the backend
+################################################################################
+apt install -yq pkg-config libjack-jackd2-0 libjack-jackd2-dev libasound2-dev
+
+# Target versions
+BACKEND_COMMITISH="ea623b4663cc739e017afb3e1e7322851ea01672"
+
+# Make sure the folder exists
+BACKEND_INSTALL_DIR="/opt/con-espressione/backend"
+mkdir -p "$BACKEND_INSTALL_DIR"
+
+cd "$BACKEND_INSTALL_DIR"
+git init
+git remote remove origin &> /dev/null || true
+git remote add origin https://github.com/IMAGINARY/con-espressione.git
+git fetch --tags origin
+git reset --hard origin/master
+git checkout "$BACKEND_COMMITISH"
+
+BACKEND_ENV_DIR="/opt/con-espressione/conda-environment"
+if !("$CONDA" env list | grep "[[:space:]]$BACKEND_ENV_DIR\$" > /dev/null )
+then
+    echo "Creating conda environment"
+    "$CONDA" env create -f="$BACKEND_INSTALL_DIR/environment.yml" -p "$BACKEND_ENV_DIR"
+else
+    echo "Updating conda environment"
+    "$CONDA" env update -f="$BACKEND_INSTALL_DIR/environment.yml" -p "$BACKEND_ENV_DIR"
+fi
+
+################################################################################
+# Install the frontend
+################################################################################
+
+# Target versions
+FRONTEND_COMMITISH="v1.0"
+
+# Make sure the folder exists
+FRONTEND_INSTALL_DIR="/opt/con-espressione/frontend"
+mkdir -p "$FRONTEND_INSTALL_DIR"
+
+cd "$FRONTEND_INSTALL_DIR"
+git init
+git remote remove origin &> /dev/null || true
+git remote add origin https://github.com/IMAGINARY/con-espressione-ui.git
+git fetch --tags origin
+git reset --hard origin/master
+git checkout "$FRONTEND_COMMITISH"
+
+./menu/install.sh
+
+################################################################################
+# Install Pianoteq synthesizer
+################################################################################
+
+# Not implemented due to license restrictions
+echo Consider installing Pianoteq 6 synthesizer

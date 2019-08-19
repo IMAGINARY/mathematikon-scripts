@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+PIDS=""
+function finish {
+    kill $PIDS >/dev/null 2>&1
+}
+trap finish SIGINT SIGTERM EXIT
+
+# Either use the user-defined exhibit or the default exhibit for this host (if any)
+USER_DEFINED_EXHIBIT="$HOME/.exhibition/exhibit-default"
+if command -v "$USER_DEFINED_EXHIBIT"; then
+    EXHIBIT="$USER_DEFINED_EXHIBIT"
+else
+    EXHIBIT="exhibit-$(get-default-exhibit-by-hostname)"
+fi
+
+if command -v "$EXHIBIT"; then
+    # Launch the exhibit in the background
+    "$EXHIBIT" &
+    PID_EXHIBIT="$!"
+    PIDS="$PIDS $PID_EXHIBIT"
+    
+    # Wait for the exhibit to finish or until the signal trap is triggered
+    wait $PID_EXHIBIT
+else
+    >&2 echo "Default exhibit not found"
+    exit 1
+fi

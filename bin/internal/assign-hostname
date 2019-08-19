@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+HOSTNAME=$(/opt/lalalab-scripts/bin/get-hostname-by-mac)
+if [ $? -eq 0 ]; then
+    echo $HOSTNAME > /etc/hostname
+    /bin/hostname -F /etc/hostname
+    /usr/bin/avahi-set-host-name "$HOSTNAME"
+fi
+
+exit 0

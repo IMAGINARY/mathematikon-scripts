@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+if [ "$UID" -ne 0 ]
+then
+    >&2 echo "This script requires superuser priviledges."
+    exit 1
+fi
+
+# Music graph is a Windows program, so run it via wine
+apt install -yq wine-stable
+
+# Target version
+TAG="v0.6"
+
+# Make sure the folder exists
+INSTALL_DIR="/opt/music-graph"
+mkdir -p "$INSTALL_DIR"
+
+# Check if the target version is already installed (test for symlink created by this script)
+if [ -e "$INSTALL_DIR/$TAG.exe" ]; then
+    echo "music-graph $TAG already installed"
+else
+    # Remove previous versions
+    rm -rf "$INSTALL_DIR"/{*,.*} 2> /dev/null
+
+    # Download and unpack the ZIP file
+    TEMP_ZIP="$(mktemp)"
+    TEMP_DIR="$(mktemp -d)"
+    wget -O "$TEMP_ZIP" "https://github.com/grandao/music-graph/releases/download/$TAG/music-graph-$TAG.zip"
+    unzip "$TEMP_ZIP" -d "$TEMP_DIR"
+    shopt -s nullglob
+    mv -v "$TEMP_DIR/music-graph/"{*,.[^.]*,..?*} "$INSTALL_DIR"
+    rm -rf "$TEMP_DIR"
+    rm -f "$TEMP_ZIP"
+    
+    # Create a symlink to the exe file to serve as identifier for the installed version
+    ln -s "$INSTALL_DIR/Music.exe" "$INSTALL_DIR/$TAG.exe"
+fi

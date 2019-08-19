@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+if [ "$UID" -ne 0 ]
+then
+    >&2 echo "This script requires superuser priviledges."
+    exit 1
+fi
+
+# Target version
+COMMITISH="447f4c6714221fcc19c93870af68ba53a62e9d5d"
+
+# Make sure the folder exists
+INSTALL_DIR="/opt/pentatonic-scales"
+mkdir -p "$INSTALL_DIR"
+
+cd "$INSTALL_DIR"
+git init
+git remote remove origin &> /dev/null || true
+git remote add origin https://github.com/CindyJS/PentatonicScales.git
+git fetch --tags origin
+git reset --hard origin/master
+git checkout "$COMMITISH"

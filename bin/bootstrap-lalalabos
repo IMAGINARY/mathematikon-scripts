@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+
+if [ "$UID" -ne 0 ]
+then
+    echo "This script requires superuser priviledges."
+    exec sudo "$0" "$@"
+fi
+
+set -e
+
+# don't prompt during installations
+export DEBIAN_FRONTEND=noninteractive
+
+# Add PPA for software not in the default Ubuntu repositories
+add-apt-repository -y ppa:jonathonf/barrier
+
+# Update the list of available packages
+apt update
+
+# Update all currently installed packages
+apt upgrade -y
+
+# Preconfigure some Debian packages to avoid interactive prompts
+echo "jackd2 jackd/tweak_rt_limits boolean true" | debconf-set-selections
+
+# Install some useful packages
+apt install -yq --no-install-recommends \
+    aconnectgui \
+    augeas-tools \
+    barrier \
+    compton \
+    curl \
+    feh \
+    git \
+    htop \
+    jackd2 \
+    kmidimon \
+    mesa-utils \
+    net-tools \
+    nginx \
+    openbox \
+    openssh-server \
+    overlayroot \
+    pavucontrol \
+    qjackctl \
+    qsynth \
+    vmpk \
+    '' # dummy entry to terminate the list
+
+# Add the lalalab user to the audio group for accessing the realtime permissions
+# as set up by jackd above
+adduser lalalab audio
+
+# Fetch and execute lalalab-script installer; put lalalab-scripts into PATH
+curl -L https://github.com/IMAGINARY/lalalab-scripts/raw/master/bin/install-lalalab-scripts | bash
+source "/opt/lalalab-scripts/rootfs/etc/profile.d/lalalab-bin-path.sh"
+
+# Install dependencies common to many exhibits
+install-kiosk-browser
+
+# Install the exhibits
+install-ai-jam
+install-beat-box
+install-con-espressione
+install-hexachord
+install-music-graph
+install-note-compass
+install-oeis-player-mp3
+install-pentatonic-scales
+install-pink-trombone
+install-scale-lab
+install-show-me-music
+install-spectrum-analyzer
+install-whitney
+
+# Ask if overlayroot should be activated
+echo "Do you wish to make system immutable after reboot?"
+select yn in "Immutable" "Mutable" "Keep current setting"; do
+    case $yn in
+        "Immutable") /opt/lalalab-scripts/bin/enable-overlayroot; break;;
+        "Mutable") /opt/lalalab-scripts/bin/disable-overlayroot; break;;
+        "Keep current setting") break;;
+    esac
+done
+
+
+# Prompt user for reboot
+echo "Do you wish to rebeoot now?"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes) reboot; break;;
+        No) break;;
+    esac
+done

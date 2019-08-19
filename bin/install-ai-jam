@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+if [ "$UID" -ne 0 ]
+then
+    >&2 echo "This script requires superuser priviledges."
+    exit 1
+fi
+
+# Install dependencies for certain python packages
+apt install -yq \
+    build-essential \
+    libasound2-dev \
+    libasound2-dev \
+    libjack-jackd2-0 \
+    libjack-jackd2-dev \
+    pkg-config \
+    python \
+    python-pip \
+    virtualenv \
+    '' # dummy entry to terminate the list
+
+# Target version
+COMMITISH="v1.1.1"
+
+# Make sure the folder exists
+INSTALL_DIR="/opt/ai-jam"
+mkdir -p "$INSTALL_DIR"
+
+cd "$INSTALL_DIR"
+git init
+git remote remove origin &> /dev/null || true
+git remote add origin https://github.com/IMAGINARY/ai-jam.git
+git fetch --tags origin
+git reset --hard origin/master
+git checkout "$COMMITISH"
+
+# Install python packages in a virtual environment
+virtualenv --python=$(which python2.7) env || true
+./env/bin/pip install tensorflow==1.12.0 magenta==0.1.15
+
+# Download the magenta models if necessary
+./INSTALL.sh
+
+# Modify the default config
+sed "s/\(^[[:space:]]*skipStartScreen:[[:space:]]*\)false/\1true/" \
+    ./public/cfg/sample.config.yml \
+    > ./public/cfg/config.yml

@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+if [ "$UID" -ne 0 ]
+then
+    >&2 echo "This script requires superuser priviledges."
+    exit 1
+fi
+
+# Install kiosk browser
+KIOSK_BROWSER_VERSION="0.11.0-beta.1"
+KIOSK_BROWSER_VERSION_INSTALLED=$(dpkg-query --showformat='${Version} ${Status}' --show kiosk-browser 2> /dev/null | awk '$NF == "installed"{print $1}')
+if [ "$KIOSK_BROWSER_VERSION" = "$KIOSK_BROWSER_VERSION_INSTALLED" ]
+then
+    echo "kiosk-browser v$KIOSK_BROWSER_VERSION already installed"
+else
+    # First install dependencies
+    apt install -y --no-install-recommends \
+        gconf-service \
+        gconf-service-backend \
+        gconf2 \
+        gconf2-common \
+        libappindicator1 \
+        libgconf-2-4 \
+        libindicator7 \
+        '' # dummy entry to terminate the list
+    
+    # Now install the kiosk-browser package
+    TEMP_DEB="$(mktemp)"
+    wget -O "$TEMP_DEB" "https://github.com/IMAGINARY/kiosk-browser/releases/download/v"$KIOSK_BROWSER_VERSION"/kiosk-browser_"$KIOSK_BROWSER_VERSION"_amd64.deb"
+    dpkg -i "$TEMP_DEB"
+    rm -f "$TEMP_DEB"
+fi

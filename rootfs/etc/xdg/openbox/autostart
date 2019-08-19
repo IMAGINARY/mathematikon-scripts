@@ -1,0 +1,13 @@
+xset -dpms
+xset s off
+
+# Set up the default environment for the default exhibit and run it
+init-default && hidecursor repeat-exhibit exhibit-default &
+
+# Run a compositor in the background for dealing with vsync and tearing
+# Should be done after screen setup (e.g. in init-* scripts)
+compton --backend glx --glx-swap-method -1 --vsync opengl-swc &
+
+# Set La La Lab wallpaper
+# Should be done after screen setup (e.g. in init-* scripts)
+feh --bg-fill /opt/lalalab-scripts/assets/lalalab-wallpaper.png &

@@ -1,0 +1,34 @@
+#!/bin/bash
+# This script is supposed to run Whitney music box exhibit.
+# The wrapper script is supposed to be visible in ps -a resp. ps -u `id -u` to make
+# it easy to kill it (by a script or manually)
+
+PIDS=""
+function finish {
+    kill $PIDS >/dev/null 2>&1
+}
+trap finish SIGINT SIGTERM EXIT
+
+cd /opt/the-harmonic-series/lalalab
+
+# Start the backend
+npm start &
+PIDS="$PIDS $!"
+
+# Wait until the backend is likely to be ready
+sleep 10 &
+SLEEP_PID=$!
+PIDS="$PIDS $SLEEP_PID"
+wait $SLEEP_PID
+
+# The nasty hack to wake up the socket
+curl http://localhost:3000/socket.io/?transport=polling &
+PIDS="$PIDS $!"
+
+# Launch the exhibit in the background
+kiosk-browser $KIOSK_OPTS --kiosk --fullscreen http://localhost:3000 &
+PID_UI=$!
+PIDS="$PIDS $PID_UI"
+
+# Wait for the exhibit to finish or until the signal trap is triggered
+wait $PID_UI

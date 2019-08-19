@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+if [ "$UID" -ne 0 ]
+then
+    >&2 echo "This script requires superuser priviledges."
+    exit 1
+fi
+
+# retrieve files via git
+DIR="/opt/lalalab-scripts"
+mkdir -p "$DIR"
+cd "$DIR"
+git init
+git remote remove origin &> /dev/null || true
+git remote add origin https://github.com/IMAGINARY/lalalab-scripts.git
+git fetch --tags origin
+git reset --hard origin/master
+git checkout master
+
+# sync the rootfs
+rsync -va --info=ALL --exclude ".gitkeep" "$DIR/rootfs/" /
+
+# enable a service to automatically set the hostname during boot
+systemctl daemon-reload
+systemctl enable assign-hostname.service
+systemctl start assign-hostname.service
+
+# modify configuration files on the host
+./bin/internal/modify-os-cfg
+
+# disable checking for updates, auto updates, upgrades and notifications
+./bin/internal/disable-auto-updates
+systemctl disable apt-daily.service apt-daily-upgrade.service
+systemctl disable apt-daily.timer apt-daily-upgrade.timer
+
+# update dconf setting based on rsynced config files
+dconf update
+
+# update grub menu
+update-grub

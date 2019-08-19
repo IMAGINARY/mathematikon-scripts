@@ -1,0 +1,61 @@
+#!/bin/bash -l
+# This script is supposed to run AI Jam exhibit.
+# The wrapper script is supposed to be visible in ps -a resp. ps -u `id -u` to make
+# it easy to kill it (by a script or manually)
+
+PIDS=""
+function finish {
+    kill $PIDS >/dev/null 2>&1
+}
+trap finish SIGINT SIGTERM EXIT
+
+# Launch the expressivness python backend
+cd /opt/con-espressione/backend
+source /opt/con-espressione/miniconda3/bin/activate /opt/con-espressione/conda-environment/
+python con_espressione.py &
+PIDS="$PIDS $!"
+
+# Launch the Pianoteq synthesizer if available
+PIANOTEQ_SYNTH="/opt/con-espressione/Pianoteq 6 STAGE/amd64/Pianoteq 6 STAGE"
+if command -v "$PIANOTEQ_SYNTH" > /dev/null; then
+    echo "Using Pianoteq 6 synthesizer"
+
+    sleep 1s &
+    PID_SLEEP=$!
+    PIDS="$PIDS $PID_SLEEP"
+    wait $PID_SLEEP
+
+    "$PIANOTEQ_SYNTH" &
+    PIANOTEQ_SYNTH_PID=$!
+    PIDS="$PIDS $PIANOTEQ_SYNTH_PID"
+    INTERNAL_SYNTH="false"
+
+    xdotool search --sync --all --pid="$PIANOTEQ_SYNTH_PID" --onlyvisible --class '.*' windowminimize > /dev/null &
+    PID_XDOTOOL=$!
+    PIDS="$PIDS $PID_XDOTOOL"
+    wait $PID_XDOTOOL
+else
+    echo "Using internal synthesizer"
+    INTERNAL_SYNTH="true"
+fi
+
+# Launch the main UI on the primary display and send the process to the background
+DEBUG_TOOLS="false"
+kiosk-browser $KIOSK_OPTS --kiosk --fullscreen --cover-displays 0 --serve /opt/con-espressione/frontend src/index.html?showDebugTools=$DEBUG_TOOLS\&enableSynth=$INTERNAL_SYNTH &
+PID_UI=$!
+PIDS="$PIDS $PID_UI"
+
+while [ -z $UI_PORT ]
+do
+    sleep 1s
+    UI_PORT=$(lsof -p "$PID_UI" | grep "TCP localhost:[0-9]* (LISTEN)" | sed 's/.* TCP localhost:\([0-9]*\) .*/\1/')
+done
+echo "UI is being served via http://localhost:$UI_PORT"
+
+# Launch menu on secondary display
+kiosk-browser $KIOSK_OPTS --kiosk --fullscreen --cover-displays 1 http://localhost:$UI_PORT/menu/applauncher2/index.html?cfg=con-espressione &
+PID_MENU=$!
+PIDS="$PIDS $PID_MENU"
+
+# Wait for the exhibit to finish or until the signal trap is triggered
+wait $PID_UI
