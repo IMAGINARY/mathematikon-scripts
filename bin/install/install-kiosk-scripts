@@ -7,7 +7,7 @@ then
 fi
 
 # retrieve files via git
-DIR="/opt/lalalab-scripts"
+DIR="/opt/kiosk-scripts"
 mkdir -p "$DIR"
 cd "$DIR"
 git init

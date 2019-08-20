@@ -52,7 +52,7 @@ apt install -yq --no-install-recommends \
 adduser kiosk audio
 
 # Fetch and execute kiosk-scripts installer; put kiosk-scripts into PATH
-curl -L https://github.com/IMAGINARY/mathematikon-scripts/raw/master/bin/install-kiosk-scripts | bash
+curl -L https://github.com/IMAGINARY/mathematikon-scripts/raw/master/bin/install/install-kiosk-scripts | bash
 source "/opt/kiosk-scripts/rootfs/etc/profile.d/kiosk-bin-path.sh"
 
 # Install dependencies common to many exhibits
