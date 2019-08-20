@@ -12,7 +12,7 @@ mkdir -p "$DIR"
 cd "$DIR"
 git init
 git remote remove origin &> /dev/null || true
-git remote add origin https://github.com/IMAGINARY/lalalab-scripts.git
+git remote add origin https://github.com/IMAGINARY/mathematikon-scripts.git
 git fetch --tags origin
 git reset --hard origin/master
 git checkout master

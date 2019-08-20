@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-HOSTNAME=$(/opt/lalalab-scripts/bin/get-hostname-by-mac)
+HOSTNAME=$(/opt/kiosk-scripts/bin/get-hostname-by-mac)
 if [ $? -eq 0 ]; then
     echo $HOSTNAME > /etc/hostname
     /bin/hostname -F /etc/hostname

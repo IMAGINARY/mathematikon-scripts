@@ -8,6 +8,6 @@ init-default && hidecursor repeat-exhibit exhibit-default &
 # Should be done after screen setup (e.g. in init-* scripts)
 compton --backend glx --glx-swap-method -1 --vsync opengl-swc &
 
-# Set La La Lab wallpaper
+# Set wallpaper
 # Should be done after screen setup (e.g. in init-* scripts)
-feh --bg-fill /opt/lalalab-scripts/assets/lalalab-wallpaper.png &
+feh --bg-fill /opt/kiosk-scripts/assets/wallpaper.png &

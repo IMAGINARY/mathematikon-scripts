@@ -1,20 +1,6 @@
 #!/usr/bin/env bash
 
 case $(hostname) in
-    bowie)      echo "scale-lab" ;;
-    brian)      echo "ai-jam" ;;
-    giorgio)    echo "ai-jam" ;;
-    hendrix)    echo "whitney" ;;
-    khultum)    echo "pentatonic-scales" ;;
-    laurie)     echo "ai-jam" ;;
-    madonna)    echo "spectrum-analyzer" ;;
-    marley)     echo "hexachord" ;;
-    pistols)    echo "beat-box" ;;
-    presley)    echo "show-me-music" ;;
-    sabbath)    echo "con-espressione" ;;
-    shankar)    echo "harmonics-explorer" ;;
-    simone)     echo "music-graph" ;;
-    sosa)       echo "pink-trombone" ;;
-    sunn)       echo "harmonic-series" ;;
-    *)          echo "none" ;;
+    mathematikon) echo "content-slider" ;;
+    *)            echo "none" ;;
 esac

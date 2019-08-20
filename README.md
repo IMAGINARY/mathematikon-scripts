@@ -1,31 +1,31 @@
-# La La Lab scripts
+# Mathematikon scripts
 
-These scripts are used on certain interactive stations at the exhibition “La La Lab – the Mathematics of Music”.
+These scripts are used on certain interactive stations at the Mathematikon interactive station.
 
 # Installation
 
-## La La Lab OS
+## Kiosk OS
 
-The target system for running the script is Ubuntu 18.04.2 provided that the following settings have been applied during installation:
+The target system for running the script is Ubuntu 18.04.3 provided that the following settings have been applied during installation:
 
 - Choose minimal installation
 - Install third-party software for graphics and WiFi hardware... : ON
 - Configure secure boot: ON. (set a password; it needs to be entered on first boot)
 - Account settings:
-    + User name: `lalalab`
+    + User name: `kiosk`
 - Reboot after installation is complete
 - Enroll the secure boot keys using the password you entered during secure boot configuration
 - Reboot into the system
 
 ### Bootstrapping
 
-The script `bin/bootstrap-lalalabos` will install required packages, the scripts in this repository as
+The script `bin/bootstrap-os` will install required packages, the scripts in this repository as
 well as most of the exhibits:
 
 ```
-wget https://raw.githubusercontent.com/IMAGINARY/lalalab-scripts/master/bin/bootstrap-lalalabos
-chmod +x bootstrap-lalalabos
-sudo ./bootstrap-lalalabos
+wget https://raw.githubusercontent.com/IMAGINARY/mathematikon-scripts/master/bin/bootstrap-os
+chmod +x bootstrap-os
+sudo ./bootstrap-os
 ```
 
 Some changes made by the bootstrapping script might only take effect after a reboot.
@@ -42,8 +42,8 @@ In immutable mode, changes to the local file system can be performed via the `ov
 
 ## Updating
 
-You can either re-run `bootstrap-lalalabos` or reinstall/update individual exhibits via the
-`install-*` scripts. Note that in most cases, `install-lalalab-scripts` must be executed first
+You can either re-run `bootstrap-os` or reinstall/update individual exhibits via the
+`install-*` scripts. Note that in most cases, `install-mathematikon-scripts` must be executed first
 to update the other installation scripts to the most recent version.
 
 ## Uninstalling

@@ -47,38 +47,25 @@ apt install -yq --no-install-recommends \
     vmpk \
     '' # dummy entry to terminate the list
 
-# Add the lalalab user to the audio group for accessing the realtime permissions
+# Add the kiosk user to the audio group for accessing the realtime permissions
 # as set up by jackd above
-adduser lalalab audio
+adduser kiosk audio
 
-# Fetch and execute lalalab-script installer; put lalalab-scripts into PATH
-curl -L https://github.com/IMAGINARY/lalalab-scripts/raw/master/bin/install-lalalab-scripts | bash
-source "/opt/lalalab-scripts/rootfs/etc/profile.d/lalalab-bin-path.sh"
+# Fetch and execute kiosk-scripts installer; put kiosk-scripts into PATH
+curl -L https://github.com/IMAGINARY/mathematikon-scripts/raw/master/bin/install-kiosk-scripts | bash
+source "/opt/kiosk-scripts/rootfs/etc/profile.d/kiosk-bin-path.sh"
 
 # Install dependencies common to many exhibits
 install-kiosk-browser
 
 # Install the exhibits
-install-ai-jam
-install-beat-box
-install-con-espressione
-install-hexachord
-install-music-graph
-install-note-compass
-install-oeis-player-mp3
-install-pentatonic-scales
-install-pink-trombone
-install-scale-lab
-install-show-me-music
-install-spectrum-analyzer
-install-whitney
 
 # Ask if overlayroot should be activated
 echo "Do you wish to make system immutable after reboot?"
 select yn in "Immutable" "Mutable" "Keep current setting"; do
     case $yn in
-        "Immutable") /opt/lalalab-scripts/bin/enable-overlayroot; break;;
-        "Mutable") /opt/lalalab-scripts/bin/disable-overlayroot; break;;
+        "Immutable") /opt/kiosk-scripts/bin/enable-overlayroot; break;;
+        "Mutable") /opt/kiosk-scripts/bin/disable-overlayroot; break;;
         "Keep current setting") break;;
     esac
 done
