@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+# set up the display settings
+TARGET_WIDTH=3840
+TARGET_HEIGHT=2160
+TARGET_ORIENTATION=left
+
+TARGET_RESOLUTION="$TARGET_WIDTH"x"$TARGET_HEIGHT"
+
+OUTPUTS=$(xrandr | grep -E "^[A-Za-z0-9_-]+[[:space:]]+connected" | cut -d ' ' -f1)
+
+PRIMARY=--primary
+ORIENTATION_CMD="xrandr"
+for OUTPUT in $OUTPUTS; do
+  # retrieve available modes for current output
+  AVAILABLE_MODES=$(xrandr | awk -v monitor="^$OUTPUT connected" '/connected/ {p = 0} $0 ~ monitor {p = 1} p' | tail -n +2 | cut -d ' ' -f4)
+
+  # try to reset default values
+  xrandr --output "$OUTPUT" --auto --pos 0x0 --rotate normal
+
+  # check if target resolution is available
+  echo "$AVAILABLE_MODES" | grep "^$TARGET_RESOLUTION"
+  if [ $? -eq 0 ]; then
+    # then try to set the target resolution
+    xrandr --output "$OUTPUT" $PRIMARY --pos 0x0 --fb "$TARGET_RESOLUTION" --mode "$TARGET_RESOLUTION"
+  else
+    # enable output and scale preferred resolution to fit target resolution
+    xrandr --output "$OUTPUT" --auto $PRIMARY --pos 0x0 --fb "$TARGET_RESOLUTION"
+
+    # figure out current resolution
+    CURRENT_RESOLUTION=$(xrandr | awk -v monitor="^$OUTPUT connected" '/connected/ {p = 0} $0 ~ monitor {p = 1} p' | grep '\*' | cut -d ' ' -f4)
+    CURRENT_WIDTH=$(echo -n "$CURRENT_RESOLUTION" | cut -d 'x' -f1)
+    CURRENT_HEIGHT=$(echo -n "$CURRENT_RESOLUTION" | cut -d 'x' -f2)
+
+    # scale current to target resolution (might be a no-op)
+    SCALE_FACTORS=$(echo "scale=1.0; $TARGET_WIDTH / $CURRENT_WIDTH;" | bc -q)x$(echo "scale=1.0; $TARGET_HEIGHT / $CURRENT_HEIGHT;" | bc -q)
+    xrandr --output "$OUTPUT" --scale "$SCALE_FACTORS"
+  fi
+
+  if [ "$PRIMARY" == "--primary" ]; then
+    PRIMARY="--same-as $OUTPUT"
+  fi
+
+  ORIENTATION_CMD="$ORIENTATION_CMD --output $OUTPUT --rotate $TARGET_ORIENTATION"
+done
+
+# finally, set the orientation
+$ORIENTATION_CMD
