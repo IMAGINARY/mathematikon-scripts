@@ -1,16 +1,37 @@
 #!/usr/bin/env bash
 
+PIDS=""
+function finish() {
+  kill $PIDS >/dev/null 2>&1
+  exit
+}
+trap finish SIGINT SIGTERM EXIT
+
+# For some reason, the X server doesn't seem to be fully ready.
+# It is possible to launch applications, but there are problems with framebuffer scaling and window positioning
+sleep 1
+
 # Disable screen saver
 xset s noblank
 xset s off
 
 # Set up the default environment for the default exhibit and run it
 init-default && hidecursor repeat-exhibit exhibit-default &
+PIDS="$PIDS $!"
 
 # Run a compositor in the background for dealing with vsync and tearing
 # Should be done after screen setup (e.g. in init-* scripts)
 compton --backend glx --glx-swap-method -1 --vsync opengl-swc &
+PIDS="$PIDS $!"
 
 # Set wallpaper
 # Should be done after screen setup (e.g. in init-* scripts)
 feh --bg-fill /opt/kiosk-scripts/assets/wallpaper.png &
+PIDS="$PIDS $!"
+
+while true; do
+  env sleep 365d &
+  PID_SLEEP=$!
+  PIDS="$PIDS $PID_SLEEP"
+  wait $PID_SLEEP
+done
