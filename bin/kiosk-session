@@ -1,4 +1,7 @@
-xset -dpms
+#!/usr/bin/env bash
+
+# Disable screen saver
+xset s noblank
 xset s off
 
 # Set up the default environment for the default exhibit and run it
