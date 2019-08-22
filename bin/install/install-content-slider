@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+if [ "$UID" -ne 0 ]
+then
+    >&2 echo "This script requires superuser priviledges."
+    exit 1
+fi
+
+# Target version
+COMMITISH_SLIDER="269a473fb873c893f0acfd60916f282153c3b7a2"
+COMMITISH_APPS="9e6e4593e6a63fdce771b549ecc353cbd7ac2e0c"
+
+# Install the slider
+INSTALL_DIR_SLIDER="/opt/content-slider/content-slider"
+mkdir -p "$INSTALL_DIR_SLIDER"
+cd "$INSTALL_DIR_SLIDER"
+git init
+git remote remove origin &> /dev/null || true
+git remote add origin https://github.com/IMAGINARY/content-slider.git
+git fetch --tags origin
+git checkout -f "$COMMITISH_SLIDER"
+cp config.sample.yaml config.yaml # FIXME: exchange config.samle.yaml with config.mathematikon.yaml when ready
+
+# Install the apps
+INSTALL_DIR_APPS="/opt/content-slider/content-slider-apps"
+mkdir -p "$INSTALL_DIR_APPS"
+cd "$INSTALL_DIR_APPS"
+git init
+git remote remove origin &> /dev/null || true
+git remote add origin https://github.com/IMAGINARY/content-slider-apps.git
+git fetch --tags origin
+git checkout -f "$COMMITISH_APPS"

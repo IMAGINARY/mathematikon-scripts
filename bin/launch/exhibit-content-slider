@@ -9,18 +9,17 @@ function finish() {
 }
 trap finish SIGINT SIGTERM EXIT
 
-URL=http://localhost:8000/content-slider/content-slider.html
-
 kiosk-browser -f \
   --reload-unresponsive 30 \
   --retry 5 \
   --port 9222 \
+  --serve /opt/content-slider \
   --append-chrome-switch="--enable-native-gpu-memory-buffers" \
   --append-chrome-switch="--enable-gpu-rasterization" \
   --append-chrome-switch="--enable-zero-copy" \
   --append-chrome-switch="--enable-oop-rasterization" \
   --append-chrome-switch="--enable-hardware-overlays" \
-  "$URL" \
+  "content-slider/content-slider.html" \
   ;
 PID=$!
 PIDS="$PIDS $PID"
