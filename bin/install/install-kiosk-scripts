@@ -28,6 +28,11 @@ systemctl start assign-hostname.service
 # modify configuration files on the host
 ./bin/internal/modify-os-cfg
 
+# enable auto-mounting of partitions labeld MATHSTATION to /opt/content-slider/USB
+./bin/internal/automount-math-station
+systemctl daemon-reload           # autogenerate the systemd unit files
+systemctl restart local-fs.target # needed to start automounting immediately, not just after reboot
+
 # disable checking for updates, auto updates, upgrades and notifications
 ./bin/internal/disable-auto-updates
 systemctl disable apt-daily.service apt-daily-upgrade.service

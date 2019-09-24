@@ -1,0 +1,42 @@
+#!/usr/bin/augtool -Asf
+
+# This script adds and fstab entry to automount any partition labeled "MATHSTATION" to /opt/content-slider/USB.
+
+# The -A combined with this makes things much faster
+# by loading only the required lens/file
+transform Fstab.lns incl /etc/fstab
+load
+
+# $noentry will match /files/etc/fstab only if the entry isn't there yet
+defvar noentry /files/etc/fstab[count(*[file="/opt/content-slider/USB"])=0]
+
+# Create the entry if it's missing
+set $noentry/01/spec "LABEL=MATHSTATION"
+set $noentry/01/file "/opt/content-slider/USB"
+
+# Now amend existing entry or finish creating the missing one
+defvar entry /files/etc/fstab/*[file="/opt/content-slider/USB"]
+
+set $entry/spec "LABEL=MATHSTATION"
+set $entry/vfstype "auto"
+
+rm  $entry/opt[*]
+rm  $entry/dump
+rm  $entry/passno
+
+set $entry/opt[1] "x-systemd.automount"
+set $entry/opt[2] "noauto"
+set $entry/opt[3] "x-systemd.idle-timeout"
+set $entry/opt[3]/value "60s"
+set $entry/opt[4] "ro"
+set $entry/opt[5] "nofail"
+set $entry/opt[6] "dmask"
+set $entry/opt[6]/value "000"
+set $entry/opt[7] "fmask"
+set $entry/opt[7]/value "111"
+set $entry/opt[8] "utf8"
+set $entry/opt[9] "x-systemd.device-timeout"
+set $entry/opt[9]/value "2"
+
+set $entry/dump "0"
+set $entry/passno "0"
