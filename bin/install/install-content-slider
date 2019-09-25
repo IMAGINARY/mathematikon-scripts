@@ -18,10 +18,19 @@ git init
 git remote remove origin &> /dev/null || true
 git remote add origin https://github.com/IMAGINARY/content-slider.git
 git fetch --tags origin
-git checkout -f "$COMMITISH_SLIDER"
 
-# Pull in the font files via a submodule
+# Clean up local repo modifications
+git reset --hard
+rm -rf fonts/*
+git submodule foreach --recursive 'git checkout -- . || :'
 git submodule update --init --recursive
+git clean -d -f -f -x
+git submodule foreach --recursive git clean -d -f -f -x
+
+# Get the new stuff
+git checkout -f "$COMMITISH_SLIDER"
+# Pull in the font files via a submodule
+git submodule update --force --init --recursive
 
 cp config.sample.yaml config.yaml # FIXME: exchange config.samle.yaml with config.mathematikon.yaml when ready
 
