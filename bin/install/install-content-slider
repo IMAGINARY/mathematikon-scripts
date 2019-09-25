@@ -7,8 +7,8 @@ then
 fi
 
 # Target version
-COMMITISH_SLIDER="269a473fb873c893f0acfd60916f282153c3b7a2"
-COMMITISH_APPS="9e6e4593e6a63fdce771b549ecc353cbd7ac2e0c"
+COMMITISH_SLIDER="54d98438172e0303ab8c7e47fc9983ea87332435"
+COMMITISH_APPS="65b2087d7af7f06f2b5625bbc99c5941d37985d9"
 
 # Install the slider
 INSTALL_DIR_SLIDER="/opt/content-slider/content-slider"
@@ -19,6 +19,10 @@ git remote remove origin &> /dev/null || true
 git remote add origin https://github.com/IMAGINARY/content-slider.git
 git fetch --tags origin
 git checkout -f "$COMMITISH_SLIDER"
+
+# Pull in the font files via a submodule
+git submodule update --init --recursive
+
 cp config.sample.yaml config.yaml # FIXME: exchange config.samle.yaml with config.mathematikon.yaml when ready
 
 # Install the apps
