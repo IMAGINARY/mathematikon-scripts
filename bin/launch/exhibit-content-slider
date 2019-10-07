@@ -20,7 +20,7 @@ kiosk-browser -f \
   --append-chrome-switch="--enable-oop-rasterization" \
   --append-chrome-switch="--enable-hardware-overlays" \
   "content-slider/content-slider.html" \
-  ;
+  &
 PID=$!
 PIDS="$PIDS $PID"
 
