@@ -20,6 +20,11 @@ git checkout master
 # sync the rootfs
 rsync -va --info=ALL --exclude ".gitkeep" "$DIR/rootfs/" /
 
+# enable timer to automatically power-off the station
+systemctl daemon-reload
+systemctl reenable --now systemd-poweroff.timer
+systemctl start systemd-poweroff.timer
+
 # enable a service to automatically set the hostname during boot
 systemctl daemon-reload
 systemctl enable assign-hostname.service
