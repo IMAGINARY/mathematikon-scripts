@@ -16,7 +16,7 @@ xset s noblank
 xset s off
 
 # Set up the default environment for the default exhibit and run it
-init-default && hidecursor repeat-exhibit exhibit-default &
+init-default && (hidecursor repeat-exhibit exhibit-default &)
 PIDS="$PIDS $!"
 
 # Run a compositor in the background for dealing with vsync and tearing
