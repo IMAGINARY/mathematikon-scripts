@@ -7,7 +7,7 @@ then
 fi
 
 # Install kiosk browser
-KIOSK_BROWSER_VERSION="0.12.0"
+KIOSK_BROWSER_VERSION="0.12.1"
 KIOSK_BROWSER_VERSION_INSTALLED=$(dpkg-query --showformat='${Version} ${Status}' --show kiosk-browser 2> /dev/null | awk '$NF == "installed"{print $1}')
 if [ "$KIOSK_BROWSER_VERSION" = "$KIOSK_BROWSER_VERSION_INSTALLED" ]
 then
