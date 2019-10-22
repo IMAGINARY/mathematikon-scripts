@@ -7,8 +7,8 @@ then
 fi
 
 # Target version
-COMMITISH_SLIDER="0160f0018a8314fd462786bd2695f444f1079a54"
-COMMITISH_APPS="65b2087d7af7f06f2b5625bbc99c5941d37985d9"
+COMMITISH_SLIDER="604c0d854b32bb1509b7045a623225741cd9cb92"
+COMMITISH_APPS="e51d37333e95cda5094545cc8e8e475e852862dd"
 
 # Install the slider
 INSTALL_DIR_SLIDER="/opt/content-slider/content-slider"
@@ -31,8 +31,6 @@ git submodule foreach --recursive git clean -d -f -f -x
 git checkout -f "$COMMITISH_SLIDER"
 # Pull in the font files via a submodule
 git submodule update --force --init --recursive
-
-cp config.sample.yaml config.yaml # FIXME: exchange config.samle.yaml with config.mathematikon.yaml when ready
 
 # Install the apps
 INSTALL_DIR_APPS="/opt/content-slider/content-slider-apps"

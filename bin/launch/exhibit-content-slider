@@ -19,7 +19,7 @@ kiosk-browser -f \
   --append-chrome-switch="--enable-zero-copy" \
   --append-chrome-switch="--enable-oop-rasterization" \
   --append-chrome-switch="--enable-hardware-overlays" \
-  "content-slider/content-slider.html" \
+  "content-slider/content-slider.html?cfg=config.mathematikon-local.yaml" \
   &
 PID=$!
 PIDS="$PIDS $PID"
