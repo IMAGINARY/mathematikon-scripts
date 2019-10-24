@@ -7,11 +7,13 @@ then
 fi
 
 # Target version
-COMMITISH_SLIDER="7556e8e299190147b3097c893efc593a7c9fd719"
+COMMITISH_SLIDER="0f35cb1028c0384e474342c785e8c84e8fa7279a"
 COMMITISH_APPS="e51d37333e95cda5094545cc8e8e475e852862dd"
 
+INSTALL_DIR_BASE="/opt/content-slider"
+
 # Install the slider
-INSTALL_DIR_SLIDER="/opt/content-slider/content-slider"
+INSTALL_DIR_SLIDER="$INSTALL_DIR_BASE/content-slider"
 mkdir -p "$INSTALL_DIR_SLIDER"
 cd "$INSTALL_DIR_SLIDER"
 git init
@@ -32,8 +34,13 @@ git checkout -f "$COMMITISH_SLIDER"
 # Pull in the font files via a submodule
 git submodule update --force --init --recursive
 
+# Copy initial configuration (but don't overwrite existing)
+rm -rf "$INSTALL_DIR_BASE/external-config"
+ln -sF /cfg "$INSTALL_DIR_BASE/external-config"
+cp -n cfg/mathematikon/*.yaml "$INSTALL_DIR_BASE/external-config/"
+
 # Install the apps
-INSTALL_DIR_APPS="/opt/content-slider/content-slider-apps"
+INSTALL_DIR_APPS="$INSTALL_DIR_BASE/content-slider-apps"
 mkdir -p "$INSTALL_DIR_APPS"
 cd "$INSTALL_DIR_APPS"
 git init

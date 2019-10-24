@@ -1,0 +1,10 @@
+[Unit]
+Description=Copy content-slider configuration from USB
+Requires=opt-content\x2dslider-USB.mount
+After=opt-content\x2dslider-USB.mount
+
+[Service]
+ExecStart=/bin/bash -c "cp /opt/content-slider/USB/*.yaml /opt/content-slider/external-config/ && sync"
+
+[Install]
+WantedBy=opt-content\x2dslider-USB.mount

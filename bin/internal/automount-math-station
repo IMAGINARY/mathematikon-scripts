@@ -20,23 +20,17 @@ defvar entry /files/etc/fstab/*[file="/opt/content-slider/USB"]
 set $entry/spec "LABEL=MATHSTATION"
 set $entry/vfstype "auto"
 
-rm  $entry/opt[*]
+rm  $entry/opt
 rm  $entry/dump
 rm  $entry/passno
 
-set $entry/opt[1] "x-systemd.automount"
-set $entry/opt[2] "noauto"
-set $entry/opt[3] "x-systemd.idle-timeout"
-set $entry/opt[3]/value "60s"
-set $entry/opt[4] "ro"
-set $entry/opt[5] "nofail"
-set $entry/opt[6] "dmask"
-set $entry/opt[6]/value "000"
-set $entry/opt[7] "fmask"
-set $entry/opt[7]/value "111"
-set $entry/opt[8] "utf8"
-set $entry/opt[9] "x-systemd.device-timeout"
-set $entry/opt[9]/value "2"
+set $entry/opt[1] "ro"
+set $entry/opt[2] "nofail"
+set $entry/opt[3] "dmask"
+set $entry/opt[3]/value "000"
+set $entry/opt[4] "fmask"
+set $entry/opt[4]/value "111"
+set $entry/opt[5] "utf8"
 
 set $entry/dump "0"
 set $entry/passno "0"
