@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 CMD='echo "overlayroot_cfgdisk=\"disabled\"
-overlayroot=\"tmpfs\"" > /etc/overlayroot.local.conf'
+overlayroot=\"tmpfs:resurse=0\"" > /etc/overlayroot.local.conf'
 
 if ! overlayroot-chroot bash -c "$CMD" 2> /dev/null
 then
