@@ -4,7 +4,7 @@ Requires=opt-content\x2dslider-USB.mount
 After=opt-content\x2dslider-USB.mount
 
 [Service]
-ExecStart=/bin/bash -c "cp /opt/content-slider/USB/*.yaml /opt/content-slider/external-config/ && sync"
+ExecStart=/bin/bash -c "cp /opt/content-slider/USB/*.yaml /opt/content-slider/external-config/ && sync && killall -r '^exhibit-*'"
 
 [Install]
 WantedBy=opt-content\x2dslider-USB.mount
