@@ -18,7 +18,7 @@ set $noentry/01/file "/USB"
 defvar entry /files/etc/fstab/*[file="/USB"]
 
 set $entry/spec "LABEL=MATHSTATION"
-set $entry/vfstype "auto"
+set $entry/vfstype "vfat"
 
 rm  $entry/opt
 rm  $entry/dump
