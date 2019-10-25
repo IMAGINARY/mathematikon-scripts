@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# Exit on errors
+set -e
+
+USB="/USB"
+CFG="/cfg"
+
+# Copy new configuration from USB
+find "$USB/"*.yaml -maxdepth 1 -type f -execdir cp "{}" "$CFG/" ";"
+sync
+
+# restart the exhibit
+killall -r '^exhibit-*'
