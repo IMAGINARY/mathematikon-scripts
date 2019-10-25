@@ -24,13 +24,12 @@ rm  $entry/opt
 rm  $entry/dump
 rm  $entry/passno
 
-set $entry/opt[1] "ro"
-set $entry/opt[2] "nofail"
-set $entry/opt[3] "dmask"
-set $entry/opt[3]/value "000"
-set $entry/opt[4] "fmask"
-set $entry/opt[4]/value "111"
-set $entry/opt[5] "utf8"
+set $entry/opt[1] "nofail"
+set $entry/opt[2] "dmask"
+set $entry/opt[2]/value "000"
+set $entry/opt[3] "fmask"
+set $entry/opt[3]/value "111"
+set $entry/opt[4] "utf8"
 
 set $entry/dump "0"
 set $entry/passno "0"

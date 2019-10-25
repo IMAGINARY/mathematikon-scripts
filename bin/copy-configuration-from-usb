@@ -6,8 +6,20 @@ set -e
 USB="/USB"
 CFG="/cfg"
 
+# Backup previous configuration to USB
+TIMESTAMP=$(date +%F_%H-%M-%S)
+BACKUP="$USB/backups/$TIMESTAMP"
+mkdir -p "$BACKUP"
+find "$CFG" -name "*.yaml" -maxdepth 1 -type f -execdir cp "{}" "$BACKUP/" ";"
+sync
+
 # Copy new configuration from USB
-find "$USB/"*.yaml -maxdepth 1 -type f -execdir cp "{}" "$CFG/" ";"
+find "$USB" -name "*.yaml"  -maxdepth 1 -type f -execdir cp "{}" "$CFG/" ";"
+sync
+
+# Remount USB in read-only mode
+# I could also unmount it directly, but keeping it around in read-only mode makes debugging easier
+mount -o remount,ro "$USB"
 sync
 
 # restart the exhibit
