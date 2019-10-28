@@ -7,7 +7,7 @@ then
 fi
 
 # Target version
-COMMITISH_SLIDER="cfed2f8fdcfd37f486c9290affde64b809b6dc04"
+COMMITISH_SLIDER="a8b7ca49d62c799acd21ce42cbdb2974a03e4971"
 COMMITISH_APPS="e51d37333e95cda5094545cc8e8e475e852862dd"
 
 INSTALL_DIR_BASE="/opt/content-slider"
