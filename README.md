@@ -129,6 +129,16 @@ Each time a configuration is updated, the previous configuration is backed up to
 
 You can use these backups to go back to a previously working state in case a configuration file contained an error.
 
+## Remote debugging
+
+The exhibit runs in a Chrome-based web browser with remote debugging enabled on port `9222`, which is only exposed on localhost. In order to connect from another host, it is necessary to forward the port, e.g. via `ssh` (executed on said host):
+```
+ssh -v -N -L 8222:127.0.0.1:9222 kiosk@mathematikon.local
+```
+This will forward the remote port `9222` to the host's local port `8222`. Note that it might be necessary to exchange `mathematikon.local` for the IP address, depending on your configuration.
+
+Now you can open [chrome://inspect/#devices](chrome://inspect/#devices) in a Chrome-based browser and the exhibit should show up for remote inspection and debugging.
+
 # Additional notes on some of the scripts
 
 ## Switching to a regular desktop session
