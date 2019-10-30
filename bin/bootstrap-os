@@ -59,6 +59,7 @@ source "/opt/kiosk-scripts/rootfs/etc/profile.d/kiosk-bin-path.sh"
 install-kiosk-browser
 
 # Install the exhibits
+install-content-slider
 
 # Ask if overlayroot should be activated
 echo "Do you wish to make system immutable after reboot?"
