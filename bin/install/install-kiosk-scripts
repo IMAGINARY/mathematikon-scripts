@@ -20,6 +20,9 @@ git checkout master
 # sync the rootfs
 rsync -va --info=ALL --exclude ".gitkeep" "$DIR/rootfs/" /
 
+# disable the network time synchronization (time should be set via BIOS)
+systemctl disable systemd-timesyncd.service
+
 # enable timer to automatically power-off the station
 systemctl daemon-reload
 systemctl reenable --now systemd-poweroff.timer
