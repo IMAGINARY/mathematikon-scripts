@@ -18,6 +18,8 @@ The target system for running the script is Ubuntu 18.04.3 provided that the fol
      - 64 MB FAT32 partition named `cfg` and mounted to `/cfg` 
      - Ext4 root partition mounted to `/`
 - Account settings:
+    + Host name: `mathematikon`
+      * When choosing another host name, the [default exhibit needs to be set separately](#autostart).
     + User name: `kiosk`
 - Reboot after installation is complete
 - Enroll the secure boot keys using the password you entered during secure boot configuration
